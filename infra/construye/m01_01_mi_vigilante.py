@@ -36,7 +36,9 @@ print(f"registros recibidos en {DURACION_S} s: {len(recibidos)}")
 print("primer registro:", json.dumps(recibidos[0][1], ensure_ascii=False))
 
 # --- PASO 3: leer los campos de cada registro ----------------------------------
-# (pega aquí el bloque del paso 3)
+print("pieza  secuencia  tiempo_ciclo_s")
+for _, registro in recibidos[:3]:                # los tres primeros; el _ es la hora de llegada, que aquí no usas
+    print(f"{registro['pieza_id']}  {registro['secuencia']:9d}  {registro['tiempo_ciclo_s']:14.2f}")
 
 # --- PASO 4: detectar carcasas que faltan y reinicios --------------------------
 huecos = reinicios = 0
