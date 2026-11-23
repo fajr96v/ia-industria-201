@@ -1,0 +1,742 @@
+{
+  "name": "M05-06 Mi agente",
+  "nodes": [
+    {
+      "parameters": {
+        "content": "## Paso 1 (ya hecho)\nEl supervisor pregunta en el chat; **Petición** deja la pregunta en `peticion`; **leer_estacion** lee `/data/estado.json` y **Extraer JSON** lo convierte en campos.\n\nPregunta en el chat y mira cada nodo.",
+        "height": 200,
+        "width": 860,
+        "color": 7
+      },
+      "id": "c6ff4c79-3821-4685-bfb8-562845831baf",
+      "name": "Nota s1",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## Paso 2\n**Dato para el modelo**\n\nDebajo: un *Edit Fields (Set)* con los cuatro campos.",
+        "height": 200,
+        "width": 200
+      },
+      "id": "506c5b78-79b0-4687-a200-dd76521a1f01",
+      "name": "Nota s2",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        880,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## Paso 3\n**¿Pide un cambio?**\n\nDebajo: un *If* y, en su salida *true*, **Negativa (sin modelo)**.",
+        "height": 200,
+        "width": 420
+      },
+      "id": "c070d117-7148-4aff-9b71-072c0a46b531",
+      "name": "Nota s3",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        1104,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## Paso 4\n**Redactar (Qwen)**\n\nDebajo: un *Basic LLM Chain* en la salida *false* del If, con **Qwen local** en su conector *Model*.",
+        "height": 200,
+        "width": 260
+      },
+      "id": "5ef5c962-96d7-4dd5-b0be-d833260ccba2",
+      "name": "Nota s4",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        1536,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## Paso 5\n**Comprobar números**\n\nDebajo: un nodo *Code* detrás de Redactar.",
+        "height": 200,
+        "width": 220
+      },
+      "id": "e63149d9-a1cf-4e01-a1c1-46f61219241b",
+      "name": "Nota s5",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        1824,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## Paso 6\n**Traza, archivo, Mosquitto y respuesta**\n\nDebajo, en fila: *Registro de traza* → *Línea de texto* → *Escribir traza (archivo)* → *Publicar (Mosquitto)* → *Respuesta*.",
+        "height": 200,
+        "width": 1080
+      },
+      "id": "6eb7b2f3-7a10-48c3-9c54-d6ba98481b79",
+      "name": "Nota s6",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        2064,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## Paso 9\n**Otra entrada: un webhook**\n\nAñade un nodo *Webhook* justo encima de esta nota y conéctalo a **Petición**.",
+        "height": 200,
+        "color": 5
+      },
+      "id": "a4261d19-02ba-46d9-bd4a-7dc507fd29f8",
+      "name": "Nota s9",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        0,
+        688
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## Paso 10\n**Si el modelo no está**\n\nEncima de esta nota: salida *Error* de Redactar → **Sin modelo (dato tal cual)**.",
+        "height": 200,
+        "color": 3
+      },
+      "id": "8c9c4820-2f1c-478b-92f6-8552882b093c",
+      "name": "Nota s10",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        1824,
+        816
+      ]
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "84677995-32b6-427f-89a2-196bb44873c9",
+      "name": "Supervisor pregunta",
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        80,
+        368
+      ],
+      "webhookId": "m0506-mi-chat"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "f0",
+              "name": "peticion",
+              "type": "string",
+              "value": "={{ $json.chatInput ?? $json.body.peticion }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "ea04c5f4-b78d-4bf2-b1d2-71265a7e11d0",
+      "name": "Petición",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        304,
+        464
+      ]
+    },
+    {
+      "parameters": {
+        "fileSelector": "/data/estado.json",
+        "options": {}
+      },
+      "id": "46301e79-fabd-48c9-bb90-b18ce4d90cca",
+      "name": "leer_estacion (sensor)",
+      "type": "n8n-nodes-base.readWriteFile",
+      "typeVersion": 1.1,
+      "position": [
+        528,
+        464
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "fromJson",
+        "options": {}
+      },
+      "id": "7c1ad331-0759-476c-a366-a891b4679253",
+      "name": "Extraer JSON",
+      "type": "n8n-nodes-base.extractFromFile",
+      "typeVersion": 1.1,
+      "position": [
+        736,
+        464
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "f050ba20-4016-44e4-a8e0-5fa8e2aa2484",
+              "name": "data.pieza_id",
+              "value": "={{ $json.data.pieza_id }}",
+              "type": "string"
+            },
+            {
+              "id": "265f70b5-de3c-4539-860c-c6b0bf8cecd8",
+              "name": "data.temperatura_c",
+              "value": "={{ $json.data.temperatura_c }}",
+              "type": "number"
+            },
+            {
+              "id": "925cd673-3dcf-4f54-a9e0-e2da25696e26",
+              "name": "data.vibracion_mm_s",
+              "value": "={{ $json.data.vibracion_mm_s }}",
+              "type": "number"
+            },
+            {
+              "id": "ac689806-dc78-47c1-9aa5-a028c8143848",
+              "name": "data.corriente_a",
+              "value": "={{ $json.data.corriente_a }}",
+              "type": "number"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.5,
+      "position": [
+        944,
+        464
+      ],
+      "id": "ee7a4733-42c4-40dd-b00e-8695a8fed1f4",
+      "name": "Dato para el modelo"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "f5d8f899-9522-4d2b-9cd6-f09eaf16aac9",
+              "name": "respuesta",
+              "value": "No puedo hacer eso: no tengo ninguna herramienta que cambie la estación. Avisa al responsable de turno.",
+              "type": "string"
+            },
+            {
+              "id": "d98b25ee-f2c4-4aff-9abe-aece15c7af76",
+              "name": "herramienta",
+              "value": "ninguna",
+              "type": "string"
+            },
+            {
+              "id": "91946d53-8757-4d9a-9c2e-f1abf4e80ea3",
+              "name": "comprobacion",
+              "value": "no aplica",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.5,
+      "position": [
+        1376,
+        368
+      ],
+      "id": "2edfa2e2-0ae9-4384-9500-702c79ffea99",
+      "name": "Negativa (sin modelo)"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Petición: {{ $('Petición').item.json.peticion }}\nDato de leer_estacion: {{ JSON.stringify($json) }}",
+        "messages": {
+          "messageValues": [
+            {
+              "message": "Redacta una frase para el supervisor. Copia los números exactamente."
+            }
+          ]
+        },
+        "batching": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.9,
+      "position": [
+        1536,
+        528
+      ],
+      "id": "01a3f8b8-1be9-412e-89c5-8818608f5d95",
+      "name": "Redactar (Qwen)",
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "qwen2.5-0.5b-instruct-q4_k_m.gguf",
+          "mode": "id"
+        },
+        "responsesApiEnabled": false,
+        "options": {
+          "maxTokens": 60,
+          "temperature": 0.1,
+          "timeout": 20000,
+          "maxRetries": 1
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.3,
+      "position": [
+        1536,
+        736
+      ],
+      "id": "8335a5a0-745a-4215-a43d-c3797678c646",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "7ef54TyrHUEqorQI",
+          "name": "Qwen local (llm)"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// Los números que dio la herramienta tienen que aparecer tal cual en la frase\nconst dato = $('Dato para el modelo').first().json;\nconst frase = $json.text.trim();\nconst numeros = Object.values(dato).filter(v => typeof v === 'number').map(String);\nconst faltan = numeros.filter(n => !frase.includes(n));\nreturn [{ json: {\n  respuesta: faltan.length ? `Dato de la estación: ${JSON.stringify(dato)}` : frase,\n  herramienta: 'leer_estacion',\n  comprobacion: faltan.length ? `NO: faltan o cambian ${faltan.join(', ')}` : 'OK',\n} }];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1904,
+        464
+      ],
+      "id": "3b4d6e55-e099-4eac-af98-7cd28e7ec369",
+      "name": "Comprobar números"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "49282a89-ae08-43a4-864c-beb60684743b",
+              "name": "registro",
+              "value": "={{ { hora: $now.toISO(), peticion: $('Petición').item.json.peticion, herramienta: $json.herramienta, dato: $json.herramienta === 'ninguna' ? null : $('Dato para el modelo').first().json, respuesta: $json.respuesta, comprobacion: $json.comprobacion } }}",
+              "type": "object"
+            },
+            {
+              "id": "22f47afc-170b-4eda-8cd6-03ca91876ebe",
+              "name": "=linea",
+              "value": "={{ JSON.stringify({ hora: $now.toISO(), peticion: $('Petición').item.json.peticion, herramienta: $json.herramienta, dato: $json.herramienta === 'ninguna' ? null : $('Dato para el modelo').first().json, respuesta: $json.respuesta, comprobacion: $json.comprobacion }) + \"\\n\" }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.5,
+      "position": [
+        2128,
+        464
+      ],
+      "id": "e938717e-1d74-4295-af3c-a91b1507e49b",
+      "name": "Registro de traza"
+    },
+    {
+      "parameters": {
+        "operation": "toText",
+        "sourceProperty": "linea",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.convertToFile",
+      "typeVersion": 1.2,
+      "position": [
+        2352,
+        464
+      ],
+      "id": "b945ef70-e58e-4a19-9ea4-1d9aea2d02fc",
+      "name": "Línea de texto"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "add25524-8f7d-4c50-a5e1-5fd589692701",
+              "name": "output",
+              "value": "={{ $('Registro de traza').item.json.registro.respuesta }}",
+              "type": "string"
+            },
+            {
+              "id": "6a86b3dc-5749-4c91-bb7e-ab63d72920ae",
+              "name": "=herramienta",
+              "value": "={{ $('Registro de traza').item.json.registro.herramienta }}",
+              "type": "string"
+            },
+            {
+              "id": "f779ecdf-3bad-434d-9033-1424b02b2bdc",
+              "name": "comprobacion",
+              "value": "={{ $('Registro de traza').item.json.registro.comprobacion }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.5,
+      "position": [
+        3024,
+        464
+      ],
+      "id": "d848f638-35e7-4e95-9d44-95055124a1e8",
+      "name": "Respuesta"
+    },
+    {
+      "parameters": {
+        "topic": "linea/est01/agente",
+        "sendInputData": false,
+        "message": "={{ $('Registro de traza').item.json.linea }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.mqtt",
+      "typeVersion": 1,
+      "position": [
+        2800,
+        464
+      ],
+      "id": "f05f7b64-6f7b-4ca9-aa69-5527a8ea73e3",
+      "name": "Publicar (Mosquitto)",
+      "credentials": {
+        "mqtt": {
+          "id": "0KyZU0AVsRUJvimo",
+          "name": "Mosquitto de la línea"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "write",
+        "fileName": "/data/n8n/traza_agente.jsonl",
+        "options": {
+          "append": true
+        }
+      },
+      "type": "n8n-nodes-base.readWriteFile",
+      "typeVersion": 1.1,
+      "position": [
+        2576,
+        464
+      ],
+      "id": "937b2fde-6942-4ff0-8836-b6e26e2b8dce",
+      "name": "Escribir traza (archivo)"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 4
+          },
+          "conditions": [
+            {
+              "id": "c92870ed-6118-433b-ae44-a5cc20bdc451",
+              "leftValue": "={{ $('Petición').item.json.peticion.toLowerCase() }}",
+              "rightValue": "(para |sube|baja|cambia|escribe|apaga)",
+              "operator": {
+                "type": "string",
+                "operation": "regex"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.4,
+      "position": [
+        1168,
+        464
+      ],
+      "id": "25227810-ab7c-454e-9313-49d4d53b385e",
+      "name": "¿Pide un cambio?"
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "est01-agente",
+        "responseMode": "lastNode",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.2,
+      "position": [
+        80,
+        544
+      ],
+      "id": "10fea42c-3e24-4510-88c2-f50f1b3cfe46",
+      "name": "Otro sistema llama",
+      "webhookId": "71ae813a-f855-48c9-bb9c-12c8842a1953"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "17ebe35f-32f7-49e4-adf1-c967d6481267",
+              "name": "respuesta",
+              "value": "=Modelo no disponible. Dato de la estación: {{ JSON.stringify($('Dato para el modelo').first().json) }}",
+              "type": "string"
+            },
+            {
+              "id": "449ce8a4-cb1c-419f-9b75-3a826aa49f53",
+              "name": "herramienta",
+              "value": "leer_estacion",
+              "type": "string"
+            },
+            {
+              "id": "689f65b0-a386-452f-bb82-648961f3230c",
+              "name": "comprobacion",
+              "value": "modelo no disponible",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.5,
+      "position": [
+        1904,
+        624
+      ],
+      "id": "d6f0326c-fb7a-4d28-a23c-6e424a383dbc",
+      "name": "Sin modelo (dato tal cual)"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Supervisor pregunta": {
+      "main": [
+        [
+          {
+            "node": "Petición",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Petición": {
+      "main": [
+        [
+          {
+            "node": "leer_estacion (sensor)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "leer_estacion (sensor)": {
+      "main": [
+        [
+          {
+            "node": "Extraer JSON",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extraer JSON": {
+      "main": [
+        [
+          {
+            "node": "Dato para el modelo",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Dato para el modelo": {
+      "main": [
+        [
+          {
+            "node": "¿Pide un cambio?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Redactar (Qwen)",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Redactar (Qwen)": {
+      "main": [
+        [
+          {
+            "node": "Comprobar números",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Sin modelo (dato tal cual)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Negativa (sin modelo)": {
+      "main": [
+        [
+          {
+            "node": "Registro de traza",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Comprobar números": {
+      "main": [
+        [
+          {
+            "node": "Registro de traza",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Registro de traza": {
+      "main": [
+        [
+          {
+            "node": "Línea de texto",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Línea de texto": {
+      "main": [
+        [
+          {
+            "node": "Escribir traza (archivo)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Publicar (Mosquitto)": {
+      "main": [
+        [
+          {
+            "node": "Respuesta",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Escribir traza (archivo)": {
+      "main": [
+        [
+          {
+            "node": "Publicar (Mosquitto)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "¿Pide un cambio?": {
+      "main": [
+        [
+          {
+            "node": "Negativa (sin modelo)",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Redactar (Qwen)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Otro sistema llama": {
+      "main": [
+        [
+          {
+            "node": "Petición",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Sin modelo (dato tal cual)": {
+      "main": [
+        [
+          {
+            "node": "Registro de traza",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "63ff4375-a301-42bc-938d-42ce6d708cf4",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "e87b7633e4cbb3691ea953651ea0a021ce3f3ac9b4a2b4accced0015b2c8a146"
+  },
+  "nodeGroups": [],
+  "id": "ALTyCFlokiHaIXMQ",
+  "tags": []
+}
