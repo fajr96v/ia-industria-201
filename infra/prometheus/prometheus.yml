@@ -13,3 +13,11 @@ scrape_configs:
   - job_name: archivador      # el histórico: registros guardados
     static_configs:
       - targets: ["archivador:9101"]
+
+# Previsión: si la tendencia de los últimos 2 minutos sigue, en 5 minutos pasará de 70 °C
+  - alert: PrevisionTemperaturaAlta
+      expr: predict_linear(estacion_temperatura_husillo_celsius[2m], 300) > 70
+      for: 10s
+      labels: {severidad: aviso}
+      annotations:
+        resumen: "Si sigue así, el husillo pasará de 70 °C en menos de 5 minutos"
